@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Portal de Jogos - Início</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1>Portal de Jogos</h1>
+      <nav>
+        <a href="index.html">Início</a>
+        <a href="games.html">Conteúdos</a>
+        <a href="contact.html">Contacto</a>
+        <a href="auth.html" id="authLink">Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h2>Bem-vindo ao mundo dos jogos</h2>
+      <p>Portal completo sobre videojogos com notícias, análises, comparações e conteúdo exclusivo para membros registados.</p>
+      <div id="userWelcome" style="margin-top:1rem;display:none">
+        <p style="color:var(--accent)">✨ Bem-vindo de volta, <span id="welcomeUser"></span>!</p>
+      </div>
+    </section>
+
+    <section class="intro-cards">
+      <article>
+        <h3>🎮 Últimos lançamentos</h3>
+        <p>Descubra os títulos mais recentes, análises detalhadas e as novidades que estão a revolucionar o mundo gaming.</p>
+        <a href="games.html" style="color:var(--accent);font-weight:500">Ver conteúdos →</a>
+      </article>
+      <article>
+        <h3>📚 Guias e estratégias</h3>
+        <p>Tutoriais completos, dicas avançadas, cheats e estratégias para dominar os seus jogos favoritos.</p>
+        <a href="games.html" style="color:var(--accent);font-weight:500">Explorar guias →</a>
+      </article>
+      <article>
+        <h3>🖼️ Conteúdo exclusivo</h3>
+        <p>Acesso a wallpapers em alta resolução, imagens exclusivas e downloads premium na área VIP.</p>
+        <a href="auth.html" id="vipLink" style="color:var(--accent);font-weight:500">Aceder à área VIP →</a>
+      </article>
+    </section>
+
+    <section class="intro-cards">
+      <article>
+        <h3>📊 Comparações técnicas</h3>
+        <p>Análises comparativas entre plataformas, hardware e performance de jogos em diferentes sistemas.</p>
+        <a href="games.html" style="color:var(--accent);font-weight:500">Ver comparações →</a>
+      </article>
+      <article>
+        <h3>🎬 Vídeos e gameplay</h3>
+        <p>Trailers, gameplay footage e reviews em vídeo dos jogos mais populares e aguardados.</p>
+        <a href="games.html" style="color:var(--accent);font-weight:500">Assistir vídeos →</a>
+      </article>
+      <article>
+        <h3>💬 Comunidade</h3>
+        <p>Junte-se à nossa comunidade de gamers e partilhe experiências através do formulário de contacto.</p>
+        <a href="contact.html" style="color:var(--accent);font-weight:500">Entrar em contacto →</a>
+      </article>
+    </section>
+
+    <!-- Painel de estatísticas (se logado) -->
+    <div id="userStats" style="display:none;background:linear-gradient(45deg,rgba(0,212,255,0.1),rgba(168,85,247,0.1));padding:2rem;border-radius:12px;margin:2rem 0">
+      <h3 style="color:var(--accent);margin-bottom:1rem">📊 Suas estatísticas VIP</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem">
+        <div style="text-align:center">
+          <h4 style="color:var(--accent);margin:0">Downloads</h4>
+          <p id="downloadCount" style="font-size:2rem;margin:0">0</p>
+        </div>
+        <div style="text-align:center">
+          <h4 style="color:var(--accent);margin:0">Dias VIP</h4>
+          <p id="vipDays" style="font-size:2rem;margin:0">0</p>
+        </div>
+        <div style="text-align:center">
+          <h4 style="color:var(--accent);margin:0">Visitas</h4>
+          <p id="visitCount" style="font-size:2rem;margin:0">1</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <small>Portal de Jogos — Projeto completo com sistema de autenticação</small>
+    </div>
+  </footer>
+
+  <script>
+    // Verificar se utilizador está logado
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    
+    if (currentUser) {
+      // Utilizador logado - mostrar informações personalizadas
+      document.getElementById('userWelcome').style.display = 'block';
+      document.getElementById('welcomeUser').textContent = currentUser.user;
+      document.getElementById('userStats').style.display = 'block';
+      
+      // Atualizar links
+      document.getElementById('authLink').textContent = 'Área VIP';
+      document.getElementById('authLink').href = 'private.html';
+      document.getElementById('vipLink').textContent = 'Ir para área VIP →';
+      document.getElementById('vipLink').href = 'private.html';
+      
+      // Calcular estatísticas
+      const downloads = JSON.parse(localStorage.getItem('downloads') || '[]');
+      const userDownloads = downloads.filter(d => d.user === currentUser.user);
+      document.getElementById('downloadCount').textContent = userDownloads.length;
+      
+      // Calcular dias desde registo
+      const registrationDate = new Date(currentUser.registered);
+      const today = new Date();
+      const daysDiff = Math.floor((today - registrationDate) / (1000 * 60 * 60 * 24));
+      document.getElementById('vipDays').textContent = daysDiff;
+      
+      // Contar visitas (simulado)
+      const visits = localStorage.getItem('userVisits') || 1;
+      document.getElementById('visitCount').textContent = visits;
+      localStorage.setItem('userVisits', parseInt(visits) + 1);
+    }
+
+    // Contador de visitantes gerais
+    const totalVisits = localStorage.getItem('totalVisits') || 0;
+    localStorage.setItem('totalVisits', parseInt(totalVisits) + 1);
+  </script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Contacto</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1>Portal de Jogos</h1>
+      <nav>
+        <a href="index.html">Início</a>
+        <a href="games.html">Conteúdos</a>
+        <a href="contact.html">Contacto</a>
+        <a href="auth.html">Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="hero">
+      <h2>Entre em contacto</h2>
+      <p>Tem sugestões, dúvidas ou quer partilhar algo sobre jogos? Envie-nos uma mensagem!</p>
+    </div>
+
+    <div class="form-card">
+      <div id="messages"></div>
+      
+      <form id="contactForm" onsubmit="handleContact(event)">
+        <div class="form-group">
+          <label for="name">👤 Nome completo</label>
+          <input id="name" name="name" type="text" required 
+                 placeholder="O seu nome" maxlength="100">
+        </div>
+
+        <div class="form-group">
+          <label for="email">📧 Endereço de email</label>
+          <input id="email" name="email" type="email" required 
+                 placeholder="exemplo@email.com">
+        </div>
+
+        <div class="form-group">
+          <label for="subject">📝 Assunto</label>
+          <select id="subject" name="subject" style="width:100%;padding:0.8rem;border:2px solid var(--border);border-radius:8px;background:var(--bg-secondary);color:var(--text-primary)">
+            <option value="geral">Questão geral</option>
+            <option value="sugestao">Sugestão de conteúdo</option>
+            <option value="erro">Reportar erro no site</option>
+            <option value="parceria">Proposta de parceria</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="message">💬 Mensagem</label>
+          <textarea id="message" name="message" rows="6" required 
+                    maxlength="2000" minlength="10"
+                    placeholder="Escreva aqui a sua mensagem (mínimo 10 caracteres, máximo 2000)..."></textarea>
+          <small style="color:var(--text-secondary);font-size:0.85rem">
+            <span id="char-count">0</span>/2000 caracteres
+          </small>
+        </div>
+
+        <button type="submit">📤 Enviar mensagem</button>
+      </form>
+
+      <div style="margin-top:2rem;padding:1rem;background:rgba(0,212,255,0.05);border-radius:8px;border:1px solid rgba(0,212,255,0.1)">
+        <h4 style="color:var(--accent);margin-bottom:0.5rem">💡 Outras formas de contacto</h4>
+        <p style="color:var(--text-secondary);font-size:0.9rem">
+          • Para questões urgentes: admin@jogos-portal.com<br>
+          • Siga-nos nas redes sociais para novidades diárias<br>
+          • Junte-se à nossa comunidade Discord para discussões
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <small>Contacto — Projeto sobre jogos</small>
+    </div>
+  </footer>
+
+  <script>
+    // Character counter
+    const messageInput = document.getElementById('message');
+    const charCount = document.getElementById('char-count');
+    
+    messageInput.addEventListener('input', function() {
+      charCount.textContent = this.value.length;
+      charCount.style.color = this.value.length > 1800 ? 'var(--warning)' : 'var(--text-secondary)';
+    });
+
+    function showMessage(message, type = 'info') {
+      const messageDiv = document.getElementById('messages');
+      const className = type === 'error' ? 'message error' : 'message success';
+      messageDiv.innerHTML = `<div class="${className}">${message}</div>`;
+    }
+
+    function handleContact(event) {
+      event.preventDefault();
+      
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const subject = document.getElementById('subject').value;
+      const message = document.getElementById('message').value.trim();
+
+      // Validações
+      if (name.length < 2) {
+        showMessage('❌ O nome deve ter pelo menos 2 caracteres', 'error');
+        return;
+      }
+
+      if (message.length < 10) {
+        showMessage('❌ A mensagem deve ter pelo menos 10 caracteres', 'error');
+        return;
+      }
+
+      if (message.length > 2000) {
+        showMessage('❌ A mensagem não pode ter mais de 2000 caracteres', 'error');
+        return;
+      }
+
+      // Simular envio (em produção seria enviado para servidor)
+      const contactData = {
+        name: name,
+        email: email,
+        subject: subject,
+        message: message,
+        timestamp: new Date().toISOString()
+      };
+
+      // Salvar no localStorage (simulação)
+      let contacts = JSON.parse(localStorage.getItem('gamePortalContacts') || '[]');
+      contacts.push(contactData);
+      localStorage.setItem('gamePortalContacts', JSON.stringify(contacts));
+
+      showMessage('✅ Mensagem enviada com sucesso! Obrigado pelo contacto.', 'success');
+      
+      // Limpar formulário
+      document.getElementById('contactForm').reset();
+      charCount.textContent = '0';
+      
+      // Mostrar botão para nova mensagem
+      setTimeout(() => {
+        showMessage('✅ Mensagem enviada! <a href="contact.html" style="color:var(--accent)">Enviar nova mensagem</a> | <a href="index.html" style="color:var(--accent)">Voltar ao início</a>', 'success');
+      }, 2000);
+    }
+  </script>
+</body>
+</html>

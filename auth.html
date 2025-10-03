@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Login/Registro</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1>Portal de Jogos</h1>
+      <nav>
+        <a href="index.html">Início</a>
+        <a href="games.html">Conteúdos</a>
+        <a href="contact.html">Contacto</a>
+        <a href="auth.html" class="active">Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="hero">
+      <h2>🔐 Acesso à Área VIP</h2>
+      <p>Faça login ou registe-se para aceder ao conteúdo exclusivo</p>
+    </div>
+
+    <div class="form-card">
+      <!-- Tabs para Login/Registro -->
+      <div style="display:flex;margin-bottom:2rem;border-bottom:2px solid var(--border)">
+        <button id="loginTab" class="tab-btn active" onclick="showLogin()">🔑 Fazer Login</button>
+        <button id="registerTab" class="tab-btn" onclick="showRegister()">📝 Registrar</button>
+      </div>
+
+      <!-- Formulário de Login -->
+      <div id="loginForm" class="auth-form">
+        <h3>Entrar na sua conta</h3>
+        <form id="loginFormElement" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label for="loginUser">👤 Nome de utilizador</label>
+            <input id="loginUser" name="user" type="text" required 
+                   placeholder="Digite o seu utilizador">
+          </div>
+
+          <div class="form-group">
+            <label for="loginPass">🔑 Palavra-passe</label>
+            <input id="loginPass" name="pass" type="password" required 
+                   placeholder="Digite a sua palavra-passe">
+          </div>
+
+          <button type="submit">🚀 Entrar</button>
+        </form>
+
+        <div style="margin-top:1.5rem;padding:1rem;background:rgba(0,212,255,0.1);border-radius:8px">
+          <h4 style="color:var(--accent);margin-bottom:0.5rem">🎮 Conta de demonstração</h4>
+          <p style="color:var(--text-secondary);font-size:0.9rem">
+            <strong>Utilizador:</strong> aluno<br>
+            <strong>Palavra-passe:</strong> senha123
+          </p>
+        </div>
+      </div>
+
+      <!-- Formulário de Registro -->
+      <div id="registerForm" class="auth-form" style="display:none">
+        <h3>Criar nova conta</h3>
+        <form id="registerFormElement" onsubmit="handleRegister(event)">
+          <div class="form-group">
+            <label for="regUser">👤 Nome de utilizador</label>
+            <input id="regUser" name="user" type="text" required 
+                   placeholder="Escolha um nome de utilizador" minlength="3">
+          </div>
+
+          <div class="form-group">
+            <label for="regEmail">📧 Email</label>
+            <input id="regEmail" name="email" type="email" required 
+                   placeholder="seu@email.com">
+          </div>
+
+          <div class="form-group">
+            <label for="regPass">🔑 Palavra-passe</label>
+            <input id="regPass" name="pass" type="password" required 
+                   placeholder="Mínimo 6 caracteres" minlength="6">
+          </div>
+
+          <div class="form-group">
+            <label for="regPassConfirm">🔒 Confirmar palavra-passe</label>
+            <input id="regPassConfirm" name="passConfirm" type="password" required 
+                   placeholder="Repita a palavra-passe">
+          </div>
+
+          <button type="submit">📝 Criar Conta</button>
+        </form>
+      </div>
+
+      <!-- Área de mensagens -->
+      <div id="messages" style="margin-top:1rem"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <small>Sistema de autenticação — Portal de Jogos</small>
+    </div>
+  </footer>
+
+  <script>
+    // Dados simulados (em produção seria base de dados)
+    let users = JSON.parse(localStorage.getItem('gamePortalUsers') || '[]');
+    
+    // Utilizador padrão
+    if (users.length === 0) {
+      users.push({
+        user: 'aluno',
+        email: 'aluno@exemplo.com',
+        pass: 'senha123',
+        registered: new Date().toISOString()
+      });
+      localStorage.setItem('gamePortalUsers', JSON.stringify(users));
+    }
+
+    function showLogin() {
+      document.getElementById('loginForm').style.display = 'block';
+      document.getElementById('registerForm').style.display = 'none';
+      document.getElementById('loginTab').classList.add('active');
+      document.getElementById('registerTab').classList.remove('active');
+      document.getElementById('messages').innerHTML = '';
+    }
+
+    function showRegister() {
+      document.getElementById('loginForm').style.display = 'none';
+      document.getElementById('registerForm').style.display = 'block';
+      document.getElementById('loginTab').classList.remove('active');
+      document.getElementById('registerTab').classList.add('active');
+      document.getElementById('messages').innerHTML = '';
+    }
+
+    function showMessage(message, type = 'info') {
+      const messageDiv = document.getElementById('messages');
+      const className = type === 'error' ? 'message error' : 'message success';
+      messageDiv.innerHTML = `<div class="${className}">${message}</div>`;
+    }
+
+    function handleLogin(event) {
+      event.preventDefault();
+      const user = document.getElementById('loginUser').value.trim();
+      const pass = document.getElementById('loginPass').value;
+
+      const foundUser = users.find(u => u.user === user && u.pass === pass);
+      
+      if (foundUser) {
+        localStorage.setItem('currentUser', JSON.stringify(foundUser));
+        showMessage('✅ Login realizado com sucesso! Redirecionando...', 'success');
+        setTimeout(() => {
+          window.location.href = 'private.html';
+        }, 1500);
+      } else {
+        showMessage('❌ Utilizador ou palavra-passe incorretos', 'error');
+      }
+    }
+
+    function handleRegister(event) {
+      event.preventDefault();
+      const user = document.getElementById('regUser').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const pass = document.getElementById('regPass').value;
+      const passConfirm = document.getElementById('regPassConfirm').value;
+
+      // Validações
+      if (pass !== passConfirm) {
+        showMessage('❌ As palavras-passe não coincidem', 'error');
+        return;
+      }
+
+      if (users.find(u => u.user === user)) {
+        showMessage('❌ Este nome de utilizador já existe', 'error');
+        return;
+      }
+
+      if (users.find(u => u.email === email)) {
+        showMessage('❌ Este email já está registado', 'error');
+        return;
+      }
+
+      // Criar novo utilizador
+      const newUser = {
+        user: user,
+        email: email,
+        pass: pass,
+        registered: new Date().toISOString()
+      };
+
+      users.push(newUser);
+      localStorage.setItem('gamePortalUsers', JSON.stringify(users));
+      
+      showMessage('✅ Conta criada com sucesso! Já pode fazer login', 'success');
+      
+      // Limpar formulário e mudar para login
+      document.getElementById('registerFormElement').reset();
+      setTimeout(() => {
+        showLogin();
+      }, 2000);
+    }
+
+    // Verificar se já está logado
+    if (localStorage.getItem('currentUser')) {
+      showMessage('ℹ️ Já está logado. <a href="private.html" style="color:var(--accent)">Ir para área VIP</a>', 'info');
+    }
+  </script>
+
+  <style>
+    .tab-btn {
+      flex: 1;
+      padding: 1rem;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      border-bottom: 2px solid transparent;
+    }
+    
+    .tab-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    
+    .tab-btn:hover {
+      color: var(--text-primary);
+      background: rgba(0,212,255,0.05);
+    }
+    
+    .auth-form h3 {
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+  </style>
+</body>
+</html>
